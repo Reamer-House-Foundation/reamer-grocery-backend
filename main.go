@@ -16,12 +16,10 @@ type user struct {
 
 var data map[string]user
 
-/*
-   Create User object type with fields "id" and "name" by using GraphQLObjectTypeConfig:
-       - Name: name of object type
-       - Fields: a map of fields by using GraphQLFields
-   Setup type of field use GraphQLFieldConfig
-*/
+//   Create User object type with fields "id" and "name" by using GraphQLObjectTypeConfig:
+//       - Name: name of object type
+//       - Fields: a map of fields by using GraphQLFields
+//   Setup type of field use GraphQLFieldConfig
 var userType = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "User",
@@ -36,15 +34,13 @@ var userType = graphql.NewObject(
 	},
 )
 
-/*
-   Create Query object type with fields "user" has type [userType] by using GraphQLObjectTypeConfig:
-       - Name: name of object type
-       - Fields: a map of fields by using GraphQLFields
-   Setup type of field use GraphQLFieldConfig to define:
-       - Type: type of field
-       - Args: arguments to query with current field
-       - Resolve: function to query data using params from [Args] and return value with current type
-*/
+//   Create Query object type with fields "user" has type [userType] by using GraphQLObjectTypeConfig:
+//       - Name: name of object type
+//       - Fields: a map of fields by using GraphQLFields
+//   Setup type of field use GraphQLFieldConfig to define:
+//       - Type: type of field
+//       - Args: arguments to query with current field
+//       - Resolve: function to query data using params from [Args] and return value with current type
 var queryType = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "Query",
@@ -85,16 +81,16 @@ func executeQuery(query string, schema graphql.Schema) *graphql.Result {
 }
 
 func main() {
-	_ = importJSONDataFromFile("data.json", &data)
+	if importJSONDataFromFile("data.json", &data) {
+		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
+			result := executeQuery(r.URL.Query().Get("query"), schema)
+			json.NewEncoder(w).Encode(result)
+		})
 
-	http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-		result := executeQuery(r.URL.Query().Get("query"), schema)
-		json.NewEncoder(w).Encode(result)
-	})
-
-	fmt.Println("Now server is running on port 8080")
-	fmt.Println("Test with Get      : curl -g 'http://localhost:8080/graphql?query={user(id:\"1\"){name}}'")
-	http.ListenAndServe(":8080", nil)
+		fmt.Println("Now server is running on port 8080")
+		fmt.Println("Test with Get      : curl -g 'http://localhost:8080/graphql?query={user(id:\"1\"){name}}'")
+		http.ListenAndServe(":8080", nil)
+	}
 }
 
 //Helper function to import json from file to map
@@ -107,8 +103,8 @@ func importJSONDataFromFile(fileName string, result interface{}) (isOK bool) {
 	}
 	err = json.Unmarshal(content, result)
 	if err != nil {
-		isOK = false
 		fmt.Print("Error:", err)
+		isOK = false
 	}
-	return
+	return isOK
 }
