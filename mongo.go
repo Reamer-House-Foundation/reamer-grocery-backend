@@ -1,51 +1,43 @@
 package main
 
 import (
-	"context"
+	"errors"
 	"fmt"
-	"log"
 	"os"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/joho/godotenv"
 )
 
-func getURL() string {
-	password := os.Getenv("PASSWORD")
-	query := "mongodb+srv://reamerdb:%s@reamergrocery-vr3dj.mongodb.net/test?retryWrites=true&w=majority"
-	return fmt.Sprintf(query, password)
+func loadEnv() error {
+	err := godotenv.Load()
+	if err != nil {
+		return errors.New("Not able to load enviornment file!")
+	}
+	return nil
 }
 
-var query string = "{listing_url: \"https://www.airbnb.com/rooms/10006546\"}"
+func getURI() (string, error) {
+	username := os.Getenv("USER")
+	password := os.Getenv("PASSWORD")
 
-func main() {
-	// Set client options
-	clientOptions := options.Client().ApplyURI(getURL())
+	if username == "" {
+		return "", errors.New("Username not defined in env file!")
 
-	// Connect to MongoDB
-	client, err := mongo.Connect(context.TODO(), clientOptions)
-
-	if err != nil {
-		log.Fatal(err)
+	} else if password == "" {
+		return "", errors.New("Password not defined in env file!")
 	}
 
-	// Check the connection
-	err = client.Ping(context.TODO(), nil)
+	uri := "mongodb+srv://%s:%s@reamergrocery-vr3dj.mongodb.net/test?retryWrites=true&w=majority"
 
-	if err != nil {
-		log.Fatal(err)
+	return fmt.Sprintf(uri, username, password), nil
+}
+
+func getDBName() (string, error) {
+	dbname := os.Getenv("DBNAME")
+	if dbname == "" {
+		return "", errors.New("DBName not defined in env file!")
 	}
 
-	fmt.Println("Connected to MongoDB!")
+	return dbname, nil
 
-	collection := client.Database("sample_airbnb").Collection("listingsAndReviews")
-
-	err = client.Disconnect(context.TODO())
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Connection to MongoDB closed.")
-
-	fmt.Println(collection)
 }

@@ -1,0 +1,4 @@
+export USER=
+export PASSWORD=
+export DBNAME=groceries
+
