@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -17,19 +16,12 @@ func loadEnv() error {
 }
 
 func getURI() (string, error) {
-	username := os.Getenv("USER")
-	password := os.Getenv("PASSWORD")
-
-	if username == "" {
-		return "", errors.New("Username not defined in env file!")
-
-	} else if password == "" {
-		return "", errors.New("Password not defined in env file!")
+	err := loadEnv()
+	if err != nil {
+		return "", err
 	}
 
-	uri := "mongodb+srv://%s:%s@reamergrocery-vr3dj.mongodb.net/test?retryWrites=true&w=majority"
-
-	return fmt.Sprintf(uri, username, password), nil
+	return os.Getenv("MONGO_URI"), nil
 }
 
 func getDBName() (string, error) {
@@ -39,5 +31,4 @@ func getDBName() (string, error) {
 	}
 
 	return dbname, nil
-
 }
