@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -13,6 +14,12 @@ func main() {
 		log.Fatal()
 	}
 	fmt.Println("URI: ", uri)
+
+	// Getting the db name from the env file, is this correct?
+	dbname := os.Getenv("DBNAME")
+	db, ctx := connectToDB(uri, dbname)
+
+	fmt.Println(db, ctx)
 
 	if importJSONDataFromFile("data.json", &data) {
 		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
