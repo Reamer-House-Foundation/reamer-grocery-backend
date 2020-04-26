@@ -1,12 +1,41 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/mgo.v2/bson"
 )
+
+type Grocery struct {
+	ID   primitive.ObjectID `bson:"_id"`
+	Name string             `bson:"name"`
+}
+
+func getGroceryByID(ID primitive.ObjectID, ctx context.Context,
+	groceryCollection *mongo.Collection) (Grocery, error) {
+	var result Grocery
+
+	// Filter example
+	err := groceryCollection.FindOne(ctx, bson.M{"_id": ID}).Decode(&result)
+	if err != nil {
+		fmt.Println("Failed getting grocery!")
+		fmt.Println(err)
+		return result, err
+	}
+
+	fmt.Println("Grocery: ", result)
+
+	return result, nil
+}
 
 func loadEnv() error {
 	err := godotenv.Load()
@@ -17,27 +46,44 @@ func loadEnv() error {
 }
 
 func getURI() (string, error) {
-	username := os.Getenv("USER")
-	password := os.Getenv("PASSWORD")
-
-	if username == "" {
-		return "", errors.New("Username not defined in env file!")
-
-	} else if password == "" {
-		return "", errors.New("Password not defined in env file!")
+	err := loadEnv()
+	if err != nil {
+		return "", err
 	}
 
-	uri := "mongodb+srv://%s:%s@reamergrocery-vr3dj.mongodb.net/test?retryWrites=true&w=majority"
-
-	return fmt.Sprintf(uri, username, password), nil
+	return os.Getenv("MONGO_URI"), nil
 }
 
-func getDBName() (string, error) {
-	dbname := os.Getenv("DBNAME")
+/**
+* As a user of this function you will have to disconnect from the database
+ */
+func connectToDB(uri string, dbname string) (*mongo.Database, context.Context) {
 	if dbname == "" {
-		return "", errors.New("DBName not defined in env file!")
+		log.Fatal("DBName not set in .env")
 	}
 
-	return dbname, nil
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db := client.Database(dbname)
+
+	return db, ctx
+}
+
+func getGroceryCollection(db *mongo.Database, name string) *mongo.Collection {
+	return db.Collection(name)
 }

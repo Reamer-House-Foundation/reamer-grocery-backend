@@ -5,25 +5,32 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func main() {
-	err := loadEnv()
-	if err != nil {
-		log.Fatal()
-	}
-
 	uri, err := getURI()
 	if err != nil {
 		log.Fatal()
 	}
+	fmt.Println("URI: ", uri)
 
-	dbname, err := getDBName()
-	if err != nil {
-		log.Fatal()
-	}
+	// Getting the db name from the env file, is this correct?
+	dbname := os.Getenv("MONGO_DBNAME")
+	fmt.Println("Data base name: ", dbname)
+	db, ctx := connectToDB(uri, dbname)
 
-	fmt.Println("URI: ", uri, "DBName: ", dbname)
+	fmt.Println(db, ctx)
+
+	collection := getGroceryCollection(db, "dev1.0")
+
+	fmt.Println(collection)
+
+	id, _ := primitive.ObjectIDFromHex("5ea5e2365cfb870a298bb36e")
+	getGroceryByID(id, ctx, collection)
+
 	if importJSONDataFromFile("data.json", &data) {
 		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
 			result := executeQuery(r.URL.Query().Get("query"), schema)
