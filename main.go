@@ -2,34 +2,44 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"reamer-grocery-graphql/models"
+
+	"github.com/joho/godotenv"
 )
 
+func loadEnv() error {
+	err := godotenv.Load()
+	if err != nil {
+		return errors.New("Not able to load enviornment file!")
+	}
+	return nil
+}
+
 func main() {
-	uri, err := getURI()
+	err := loadEnv()
 	if err != nil {
 		log.Fatal()
 	}
-	fmt.Println("URI: ", uri)
 
-	// Getting the db name from the env file, is this correct?
-	dbname := os.Getenv("MONGO_DBNAME")
-	fmt.Println("Data base name: ", dbname)
-	db, ctx := connectToDB(uri, dbname)
+	db, err := models.NewDB(os.Getenv("MONGO_URI"), os.Getenv("MONGO_DBNAME"))
+	if err != nil {
+		log.Fatal()
+	}
 
-	fmt.Println(db, ctx)
+	/* This is just a test query */
+	id := "5ea5e2365cfb870a298bb36e"
+	grocery, err := db.GetGroceryByID(id)
+	if err != nil {
+		log.Fatal()
+	}
 
-	collection := getGroceryCollection(db, "dev1.0")
-
-	fmt.Println(collection)
-
-	id, _ := primitive.ObjectIDFromHex("5ea5e2365cfb870a298bb36e")
-	getGroceryByID(id, ctx, collection)
+	fmt.Println(grocery)
 
 	if importJSONDataFromFile("data.json", &data) {
 		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
