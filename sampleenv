@@ -2,5 +2,3 @@ export MONGO_USER=
 export MONGO_PASSWORD=
 export MONGO_DBNAME=groceries
 export MONGO_URI=mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@reamergrocery-vr3dj.mongodb.net/test?retryWrites=true&w=majority
-
-
