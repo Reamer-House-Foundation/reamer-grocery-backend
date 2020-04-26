@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func main() {
@@ -16,10 +18,18 @@ func main() {
 	fmt.Println("URI: ", uri)
 
 	// Getting the db name from the env file, is this correct?
-	dbname := os.Getenv("DBNAME")
+	dbname := os.Getenv("MONGO_DBNAME")
+	fmt.Println("Data base name: ", dbname)
 	db, ctx := connectToDB(uri, dbname)
 
 	fmt.Println(db, ctx)
+
+	collection := getGroceryCollection(db, "dev1.0")
+
+	fmt.Println(collection)
+
+	id, _ := primitive.ObjectIDFromHex("5ea5e2365cfb870a298bb36e")
+	getGroceryByID(id, ctx, collection)
 
 	if importJSONDataFromFile("data.json", &data) {
 		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
