@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"os"
 
-	"reamer-grocery-graphql/models"
-
 	"github.com/joho/godotenv"
+	"github.com/reamer-house-foundation/reamer-grocery-graphql/models"
 )
 
 func loadEnv() error {
