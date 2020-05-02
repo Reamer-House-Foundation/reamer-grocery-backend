@@ -12,7 +12,8 @@ import (
 
 type GroceryDB interface {
 	getGroceryByID(string) (Grocery, error)
-	GetGroceriesByQuantity(int) ([]Grocery, error)
+	getGrocerys() ([]Grocery, error)
+	GetGrocerysByQuantity(int) ([]Grocery, error)
 }
 
 type DB struct {

@@ -40,12 +40,12 @@ func main() {
 
 	fmt.Println(grocery)
 
-	groceries, err := db.GetGroceriesByQuantity(6)
+	grocerys, err := db.GetGrocerys()
 	if err != nil {
 		log.Fatal()
 	}
 
-	fmt.Println(groceries)
+	fmt.Println(grocerys)
 
 	if importJSONDataFromFile("data.json", &data) {
 		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
