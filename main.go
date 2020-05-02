@@ -40,6 +40,13 @@ func main() {
 
 	fmt.Println(grocery)
 
+	groceries, err := db.GetGroceriesByQuantity(6)
+	if err != nil {
+		log.Fatal()
+	}
+
+	fmt.Println(groceries)
+
 	if importJSONDataFromFile("data.json", &data) {
 		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
 			result := executeQuery(r.URL.Query().Get("query"), schema)
