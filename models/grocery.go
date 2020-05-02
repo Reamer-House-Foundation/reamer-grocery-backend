@@ -51,7 +51,7 @@ func (db *DB) GetGroceryByID(ID string) (Grocery, error) {
 	return result, nil
 }
 
-func (db *DB) GetGroceriesByQuantity(quantity int) ([]Grocery, error) {
+func (db *DB) GetGroceryByQuantity(quantity int) ([]Grocery, error) {
 	var results []Grocery
 
 	/* Collection name is hardcoded here.. need to discuss with team
