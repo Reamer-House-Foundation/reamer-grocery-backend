@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/reamer-house-foundation/reamer-grocery-graphql/models"
+	repo "github.com/reamer-house-foundation/reamer-grocery-graphql/pkg/repository"
 )
 
 func loadEnv() error {
@@ -26,7 +26,7 @@ func main() {
 		log.Fatal()
 	}
 
-	db, err := models.NewDB(os.Getenv("MONGO_URI"), os.Getenv("MONGO_DBNAME"))
+	db, err := repo.NewDB(os.Getenv("MONGO_URI"), os.Getenv("MONGO_DBNAME"))
 	if err != nil {
 		log.Fatal()
 	}

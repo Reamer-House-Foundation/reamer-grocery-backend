@@ -1,4 +1,4 @@
-package models
+package repo
 
 import (
 	"context"
@@ -6,14 +6,15 @@ import (
 	"log"
 	"time"
 
+	"github.com/reamer-house-foundation/reamer-grocery-graphql/pkg/models"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type GroceryDB interface {
-	getGroceryByID(string) (Grocery, error)
-	getGrocerys() ([]Grocery, error)
-	GetGrocerysByQuantity(int) ([]Grocery, error)
+	getGroceryByID(string) (models.Grocery, error)
+	getGrocerys() ([]models.Grocery, error)
+	GetGrocerysByQuantity(int) ([]models.Grocery, error)
 }
 
 type DB struct {
