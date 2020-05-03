@@ -8,6 +8,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// Grocery is the structure of our data
+type Grocery struct {
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	Name     string             `bson:"name"`
+	Quantity int32              `bson:"quantity"`
+}
+
 func (db *DB) GetGrocerys() ([]models.Grocery, error) {
 	var results []models.Grocery
 
@@ -66,4 +73,15 @@ func (db *DB) GetGroceryByQuantity(quantity int) ([]models.Grocery, error) {
 	}
 
 	return results, nil
+}
+
+func (db *DB) AddGrocery(g Grocery) error {
+
+	_, err := db.db.Collection("dev1.0").InsertOne(db.ctx, g)
+	if err != nil {
+		fmt.Println("Failed inseting")
+		fmt.Println(err)
+		return err
+	}
+	return nil
 }

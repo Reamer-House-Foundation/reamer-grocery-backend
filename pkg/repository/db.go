@@ -14,7 +14,8 @@ import (
 type GroceryDB interface {
 	getGroceryByID(string) (models.Grocery, error)
 	getGrocerys() ([]models.Grocery, error)
-	GetGrocerysByQuantity(int) ([]models.Grocery, error)
+	addGrocery(Grocery) error
+	getGrocerysByQuantity(int) ([]models.Grocery, error)
 }
 
 type DB struct {
