@@ -31,6 +31,13 @@ func main() {
 		log.Fatal()
 	}
 
+	g := models.Grocery{
+		Name:     "Black Beans",
+		Quantity: 9,
+	}
+
+	err = db.AddGrocery(g)
+
 	/* This is just a test query */
 	id := "5ea5e2365cfb870a298bb36e"
 	grocery, err := db.GetGroceryByID(id)
