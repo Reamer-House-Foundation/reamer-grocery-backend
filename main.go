@@ -31,15 +31,6 @@ func main() {
 		log.Fatal()
 	}
 
-	/* This is just a test query */
-	id := "5ea5e2365cfb870a298bb36e"
-	grocery, err := db.GetGroceryByID(id)
-	if err != nil {
-		log.Fatal()
-	}
-
-	fmt.Println(grocery)
-
 	grocerys, err := db.GetGrocerys()
 	if err != nil {
 		log.Fatal()
