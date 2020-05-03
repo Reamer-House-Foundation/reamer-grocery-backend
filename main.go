@@ -10,7 +10,7 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/joho/godotenv"
-	da "github.com/reamer-house-foundation/reamer-grocery-graphql/pkg/data_access"
+	gql "github.com/reamer-house-foundation/reamer-grocery-graphql/pkg/graphql"
 	repo "github.com/reamer-house-foundation/reamer-grocery-graphql/pkg/repository"
 )
 
@@ -49,9 +49,9 @@ func main() {
 
 	fmt.Println(grocerys)
 
-	if da.ImportJSONDataFromFile("data.json", &data) {
+	if gql.ImportJSONDataFromFile("data.json", &data) {
 		http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-			result := da.ExecuteQuery(r.URL.Query().Get("query"), schema)
+			result := gql.ExecuteQuery(r.URL.Query().Get("query"), schema)
 			json.NewEncoder(w).Encode(result)
 		})
 
