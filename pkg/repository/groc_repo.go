@@ -1,8 +1,9 @@
-package models
+package repo
 
 import (
 	"fmt"
 
+	"github.com/reamer-house-foundation/reamer-grocery-graphql/pkg/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -14,8 +15,8 @@ type Grocery struct {
 	Quantity int32              `bson:"quantity"`
 }
 
-func (db *DB) GetGrocerys() ([]Grocery, error) {
-	var results []Grocery
+func (db *DB) GetGrocerys() ([]models.Grocery, error) {
+	var results []models.Grocery
 
 	groceryCursor, err := db.db.Collection("dev1.0").Find(db.ctx, bson.M{})
 	if err != nil {
@@ -34,8 +35,8 @@ func (db *DB) GetGrocerys() ([]Grocery, error) {
 	return results, nil
 }
 
-func (db *DB) GetGroceryByID(ID string) (Grocery, error) {
-	var result Grocery
+func (db *DB) GetGroceryByID(ID string) (models.Grocery, error) {
+	var result models.Grocery
 	id, _ := primitive.ObjectIDFromHex(ID)
 
 	/* Collection name is hardcoded here.. need to discuss with team
@@ -51,8 +52,8 @@ func (db *DB) GetGroceryByID(ID string) (Grocery, error) {
 	return result, nil
 }
 
-func (db *DB) GetGroceryByQuantity(quantity int) ([]Grocery, error) {
-	var results []Grocery
+func (db *DB) GetGroceryByQuantity(quantity int) ([]models.Grocery, error) {
+	var results []models.Grocery
 
 	/* Collection name is hardcoded here.. need to discuss with team
 	*  We will probably have multiple collections.. how do we handle that? */
